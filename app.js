@@ -67,8 +67,19 @@ app.get("/cars/new",function(req,res){
 
 
 // CREATE ROUTE
-app.post("/cars/new",function(req,res){
-    res.send("create route!");
+app.post("/cars",function(req,res){
+    var brand = req.body.brand;
+    var model = req.body.model;
+    var image = req.body.image;
+    var newCar = {brand:brand, model:model, image:image};
+    
+    Car.create(newCar, function(err,newlyCreated){
+        if(err){
+            console.log(err);
+        }else{
+            res.redirect("/cars");
+        }
+    })
 });
 
 
