@@ -1,7 +1,20 @@
 <% include ../partials/header %>
 
 
-<h1>SHOW</h1>
+<div class="container">
+    <div class="row">
+        
+        <div class="col-md-9 col-centered">
+            <div class="thumbnail">
+                <img class="img-responsive" src="<%=car.image%>">
+                <div class="caption-full">
+                    <h4><a><h1><%=car.brand%> <%=car.model%></h1></a></h4>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
 
 
 <% include ../partials/footer %>

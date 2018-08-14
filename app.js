@@ -10,6 +10,7 @@ mongoose.connect("mongodb://localhost:27017/carShow", {useNewUrlParser:true});
 
 app.use(bodyParser.urlencoded({encoded: true})); //copy-paste this line
 app.set("view engine", "ejs"); //expect ejs in rendering
+app.use(express.static(__dirname + "/public")); //to access public folder
 
 
 // CAR SCHEMA
@@ -73,7 +74,13 @@ app.post("/cars/new",function(req,res){
 
 // SHOW ROUTE
 app.get("/cars/:id",function(req,res){
-    res.render("show");
+    Car.findById(req.params.id,function(err,foundCar){
+        if(err){
+            console.log(err);
+        }else{
+            res.render("show",{car:foundCar});
+        }
+    });
 });
 
 
