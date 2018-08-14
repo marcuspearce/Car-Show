@@ -40,9 +40,9 @@ var Car = mongoose.model("Car",carSchema);
 
 
 
-// ROUTE ROUTE - Landing Page
+// ROOT ROUTE - Go to index (FOR NOW)
 app.get('/',function(req,res){
-    res.render("home");
+    res.redirect("/cars");
 });
 
 
