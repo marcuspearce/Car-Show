@@ -3,7 +3,8 @@
 var express     = require("express"),
     app         = express(),
     bodyParser  = require("body-parser"),
-    mongoose    = require("mongoose");
+    mongoose    = require("mongoose"),
+    Car         = require("./models/car");
     
 // Connect to Database
 mongoose.connect("mongodb://localhost:27017/carShow", {useNewUrlParser:true});
@@ -11,15 +12,6 @@ mongoose.connect("mongodb://localhost:27017/carShow", {useNewUrlParser:true});
 app.use(bodyParser.urlencoded({encoded: true})); //copy-paste this line
 app.set("view engine", "ejs"); //expect ejs in rendering
 app.use(express.static(__dirname + "/public")); //to access public folder
-
-
-// CAR SCHEMA
-var carSchema = new mongoose.Schema({
-    brand:String,
-    model:String,
-    image:String
-});
-var Car = mongoose.model("Car",carSchema);
 
 
 // TEMPORARY ADDING TO DATABASE
