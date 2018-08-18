@@ -13,6 +13,22 @@
             </div>
         </div>
         
+        <!--comments-->
+        <div class="well">
+            <div class="text-right">
+                <a class="btn btn-success" href="/cars/<%=car._id%>/comments/new">Add New Comment</a>
+            </div>
+            <hr>
+            <% car.comments.forEach(function(comment){ %>
+                <div class="row">
+                    <div class="col-md-12">
+                        <strong><%=comment.author%></strong>
+                        <p><%=comment.text%></p>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+        
     </div>
 </div>
 

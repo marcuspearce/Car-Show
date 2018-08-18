@@ -21,6 +21,9 @@ app.get('/',function(req,res){
 });
 
 
+// CAR ROUTES
+
+
 // INDEX ROUTE - Show overview all cars
 app.get("/cars",function(req,res){
     // get all cars from db
@@ -60,11 +63,47 @@ app.post("/cars",function(req,res){
 
 // SHOW ROUTE
 app.get("/cars/:id",function(req,res){
-    Car.findById(req.params.id,function(err,foundCar){
+    Car.findById(req.params.id).populate("comments").exec(function(err,foundCar){
         if(err){
             console.log(err);
         }else{
             res.render("show",{car:foundCar});
+        }
+    });
+});
+
+
+// COMMENTS ROUTES
+
+
+// NEW COMMENT
+app.get("/cars/:id/comments/new",function(req,res){
+    Car.findById(req.params.id,function(err,foundCar){
+        if(err){
+            console.log(err);
+        }else{
+            res.render("newComment",{car:foundCar});
+        }
+    });
+});
+
+
+// CREATE COMMENT
+app.post("/cars/:id/comments",function(req,res){
+    Car.findById(req.params.id,function(err,foundCar){
+        if(err){
+            console.log(err);
+            res.redirect("/cars"); //if goes wrong can't GET this route
+        }else{
+            Comment.create(req.body.comment,function(err,newComment){
+                if(err){
+                    console.log(err);
+                }else{
+                    foundCar.comments.push(newComment);
+                    foundCar.save();
+                    res.redirect("/cars/" + foundCar._id);
+                }
+            });
         }
     });
 });
