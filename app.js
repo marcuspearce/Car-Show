@@ -32,7 +32,7 @@ app.get("/cars",function(req,res){
             console.log(err);
         }else{ 
             // pass cars data into index page
-            res.render("index",{cars:allCars});
+            res.render("cars/index",{cars:allCars});
         }
     })
 });
@@ -40,7 +40,7 @@ app.get("/cars",function(req,res){
 
 // NEW ROUTE
 app.get("/cars/new",function(req,res){
-    res.render("new");
+    res.render("cars/new");
 });
 
 
@@ -67,7 +67,7 @@ app.get("/cars/:id",function(req,res){
         if(err){
             console.log(err);
         }else{
-            res.render("show",{car:foundCar});
+            res.render("cars/show",{car:foundCar});
         }
     });
 });
@@ -82,7 +82,7 @@ app.get("/cars/:id/comments/new",function(req,res){
         if(err){
             console.log(err);
         }else{
-            res.render("newComment",{car:foundCar});
+            res.render("comments/new",{car:foundCar});
         }
     });
 });
