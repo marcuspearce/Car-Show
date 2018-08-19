@@ -133,6 +133,49 @@ app.post("/cars/:id/comments",function(req,res){
 });
 
 
+// AUTH ROUTES
+
+
+// SHOW REGISTER FORM
+app.get("/register",function(req,res){
+    res.render("auth/register");
+});
+
+
+// REGISTER LOGIC
+app.post("/register",function(req,res){
+    var newUser = new User({username:req.body.username});
+    User.register(newUser,req.body.password,function(err,user){
+        if(err){
+            console.log(err);
+            return res.render("cars/show");
+        }
+        passport.authenticate("local")(req,res,function(){
+            //console.log("REGISTERED " + newUser.username);
+            res.redirect("/");
+        });
+    });
+});
+
+
+// SHOW LOGIN FORM
+app.get("/login",function(req,res){
+    res.render("auth/login");
+});
+
+
+// LOGIN LOGIC
+app.post("/login",passport.authenticate("local",
+    {
+        successRedirect:"/",
+        failureRedirect:"/login"
+        // FOR BELOW TO WORK INCORPORATE FLASH MESSAGES LATER
+        // successFlash: "Welcome back!",
+        // failureFlash: "Invalid username or password"
+    }), function(req,res){
+});
+
+
 // START SERVER
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("CARSHOW has started");
