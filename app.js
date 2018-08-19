@@ -63,13 +63,13 @@ app.get("/cars",function(req,res){
 
 
 // NEW ROUTE
-app.get("/cars/new",function(req,res){
+app.get("/cars/new",isLoggedIn,function(req,res){
     res.render("cars/new");
 });
 
 
 // CREATE ROUTE
-app.post("/cars",function(req,res){
+app.post("/cars",isLoggedIn,function(req,res){
     var brand = req.body.brand;
     var model = req.body.model;
     var image = req.body.image;
@@ -101,7 +101,7 @@ app.get("/cars/:id",function(req,res){
 
 
 // NEW COMMENT
-app.get("/cars/:id/comments/new",function(req,res){
+app.get("/cars/:id/comments/new",isLoggedIn,function(req,res){
     Car.findById(req.params.id,function(err,foundCar){
         if(err){
             console.log(err);
@@ -113,7 +113,7 @@ app.get("/cars/:id/comments/new",function(req,res){
 
 
 // CREATE COMMENT
-app.post("/cars/:id/comments",function(req,res){
+app.post("/cars/:id/comments",isLoggedIn,function(req,res){
     Car.findById(req.params.id,function(err,foundCar){
         if(err){
             console.log(err);
@@ -174,6 +174,22 @@ app.post("/login",passport.authenticate("local",
         // failureFlash: "Invalid username or password"
     }), function(req,res){
 });
+
+
+// LOGOUT ROUTE
+app.get("/logout",function(req,res){
+    req.logout();
+    res.redirect("/");
+});
+
+
+//MIDDLEWARE
+function isLoggedIn(req,res,next){
+    if(req.isAuthenticated()){
+        return next();
+    }
+    res.redirect("/login");
+};
 
 
 // START SERVER
