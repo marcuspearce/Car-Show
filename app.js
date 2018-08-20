@@ -6,6 +6,7 @@ var express     = require("express"),
     mongoose    = require("mongoose"),
     passport    = require("passport"),
     localStrategy = require("passport-local"),
+    methodOverride = require("method-override"),
     Car         = require("./models/car"),
     Comment     = require("./models/comment"),
     User        = require("./models/user");
@@ -17,6 +18,7 @@ mongoose.connect("mongodb://localhost:27017/carShow", {useNewUrlParser:true});
 app.use(bodyParser.urlencoded({encoded: true})); //copy-paste this line
 app.set("view engine", "ejs"); //expect ejs in rendering
 app.use(express.static(__dirname + "/public")); //to access public folder
+app.use(methodOverride("_method")); //utilize method-override (use PUT in RESTful routes - update)
 
 
 // PASSPORT CONFIG
@@ -62,13 +64,13 @@ app.get("/cars",function(req,res){
 });
 
 
-// NEW ROUTE
+// NEW ROUTE - Show form to add new car
 app.get("/cars/new",isLoggedIn,function(req,res){
     res.render("cars/new");
 });
 
 
-// CREATE ROUTE
+// CREATE ROUTE - Add new car to database
 app.post("/cars",isLoggedIn,function(req,res){
     var brand = req.body.brand;
     var model = req.body.model;
@@ -89,13 +91,37 @@ app.post("/cars",isLoggedIn,function(req,res){
 });
 
 
-// SHOW ROUTE
+// SHOW ROUTE - More detailed page about single car
 app.get("/cars/:id",function(req,res){
     Car.findById(req.params.id).populate("comments").exec(function(err,foundCar){
         if(err){
             console.log(err);
         }else{
             res.render("cars/show",{car:foundCar});
+        }
+    });
+});
+
+
+// EDIT ROUTE - Show form to edit car info
+app.get("/cars/:id/edit",checkCarOwnership,function(req,res){
+    Car.findById(req.params.id,function(err,foundCar){
+        if(err){
+            console.log(err);
+        }else{
+            res.render("cars/edit",{car:foundCar});
+        }
+    });
+});
+
+
+// UPDATE ROUTE - Submit route for edit
+app.put("/cars/:id",checkCarOwnership,function(req,res){
+    Car.findByIdAndUpdate(req.params.id,req.body.car,function(err,updatedCar){
+        if(err){
+            res.redirect("/");
+        }else{
+            res.redirect("/cars/" + req.params.id);
         }
     });
 });
@@ -193,12 +219,42 @@ app.get("/logout",function(req,res){
 
 
 //MIDDLEWARE
+
+
 function isLoggedIn(req,res,next){
     if(req.isAuthenticated()){
         return next();
     }
     res.redirect("/login");
 };
+
+
+function checkCarOwnership(req,res,next){
+    if(req.isAuthenticated()){
+        Car.findById(req.params.id,function(err,foundCar){
+            if(err){
+                // car not found
+                res.redirect("back");
+            }else{
+                if(!foundCar){
+                    // car not found
+                    return res.redirect("back");
+                }
+                
+                //check if person who created car same one trying to edit/delete
+                if(foundCar.author.id.equals(req.user._id)){
+                    next();
+                }else{
+                    // not allowed - not owner
+                    res.redirect("back");
+                }
+            }
+        });
+    } else {
+        // not logged in - needs to login
+        res.redirect("/login");
+    }
+}
 
 
 
