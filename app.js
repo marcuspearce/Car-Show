@@ -73,7 +73,11 @@ app.post("/cars",isLoggedIn,function(req,res){
     var brand = req.body.brand;
     var model = req.body.model;
     var image = req.body.image;
-    var newCar = {brand:brand, model:model, image:image};
+    var author = {
+        id: req.user._id,
+        username: req.user.username
+    }
+    var newCar = {brand:brand, model:model, image:image, author:author};
     
     Car.create(newCar, function(err,newlyCreated){
         if(err){
@@ -123,6 +127,11 @@ app.post("/cars/:id/comments",isLoggedIn,function(req,res){
                 if(err){
                     console.log(err);
                 }else{
+                    // add username and id to comment
+                    newComment.author.id = req.user._id;
+                    newComment.author.username = req.user.username;
+                    
+                    newComment.save();
                     foundCar.comments.push(newComment);
                     foundCar.save();
                     res.redirect("/cars/" + foundCar._id);
@@ -190,6 +199,7 @@ function isLoggedIn(req,res,next){
     }
     res.redirect("/login");
 };
+
 
 
 // START SERVER
