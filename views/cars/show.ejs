@@ -37,7 +37,7 @@
                         <p><%=comment.text%></p>
                         
                        <!--hide edit and delete buttons if not usable (not correctUser)-->
-                        <% if(currentUser && car.author.id.equals(currentUser._id)){ %>
+                        <% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
                             <a class="btn btn-warning" href="/cars/<%=car._id%>/comments/<%=comment._id%>/edit">Edit</a>
                             <form class="delete-form" action="/cars/<%=car._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
                                 <button class="btn btn-danger">Delete</button>
