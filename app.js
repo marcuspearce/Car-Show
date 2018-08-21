@@ -143,7 +143,7 @@ app.delete("/cars/:id",checkCarOwnership,function(req,res){
 // COMMENTS ROUTES
 
 
-// NEW COMMENT
+// NEW COMMENT - show form for new comment
 app.get("/cars/:id/comments/new",isLoggedIn,function(req,res){
     Car.findById(req.params.id,function(err,foundCar){
         if(err){
@@ -155,7 +155,7 @@ app.get("/cars/:id/comments/new",isLoggedIn,function(req,res){
 });
 
 
-// CREATE COMMENT
+// CREATE COMMENT - add new comment to database
 app.post("/cars/:id/comments",isLoggedIn,function(req,res){
     Car.findById(req.params.id,function(err,foundCar){
         if(err){
@@ -176,6 +176,44 @@ app.post("/cars/:id/comments",isLoggedIn,function(req,res){
                     res.redirect("/cars/" + foundCar._id);
                 }
             });
+        }
+    });
+});
+
+
+// EDIT COMMENT - show form to edit comment
+app.get("/cars/:id/comments/:comment_id/edit",checkCommentOwnership,function(req,res){
+    Comment.findById(req.params.comment_id,function(err,foundComment){
+        if(err){
+            res.redirect("back");
+        }else{
+            res.render("comments/edit", {car_id:req.params.id,comment:foundComment});
+        }
+    });
+});
+
+
+// UPDATE COMMENT - submit route for edit
+app.put("/cars/:id/comments/:comment_id",checkCommentOwnership,function(req,res){
+    Comment.findByIdAndUpdate(req.params.comment_id,req.body.comment,function(err,updatedComment){
+        if(err){
+            res.redirect("back");
+        }else{
+            res.redirect("/cars/" + req.params.id);
+        }
+    });
+});
+
+
+// DESTROY COMMENT - remove comment from db
+app.delete("/cars/:id/comments/:comment_id",checkCommentOwnership,function(req,res){
+    Comment.findByIdAndRemove(req.params.comment_id,function(err){
+        if(err){
+            console.log(err);
+            res.redirect("back");
+        }else{
+            console.log("exec");
+            res.redirect("/cars/" + req.params.id);
         }
     });
 });
@@ -259,6 +297,37 @@ function checkCarOwnership(req,res,next){
                     next();
                 }else{
                     // not allowed - not owner
+                    res.redirect("back");
+                }
+            }
+        });
+    } else {
+        // not logged in - needs to login
+        res.redirect("/login");
+    }
+}
+
+
+function checkCommentOwnership(req,res,next){
+    if(req.isAuthenticated()){
+        Comment.findById(req.params.comment_id,function(err,foundComment){
+            if(err){
+                // comment not found
+                console.log(err);
+                res.redirect("back");
+            }else{
+                if(!foundComment){
+                    // comment not found
+                    console.log(err);
+                    return res.redirect("back");
+                }
+                
+                //check if person who created comment same one trying to edit/delete
+                if(foundComment.author.id.equals(req.user._id)){
+                    next();
+                }else{
+                    // not allowed - not owner
+                    console.log(err);
                     res.redirect("back");
                 }
             }
