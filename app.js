@@ -127,6 +127,19 @@ app.put("/cars/:id",checkCarOwnership,function(req,res){
 });
 
 
+// DESTROY ROUTE - Remove car
+app.delete("/cars/:id",checkCarOwnership,function(req,res){
+    Car.findByIdAndRemove(req.params.id,function(err){
+        if(err){
+            console.log(err);
+            res.redirect("/");
+        }else{
+            res.redirect("/");
+        }
+    });
+});
+
+
 // COMMENTS ROUTES
 
 

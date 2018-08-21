@@ -16,9 +16,9 @@
                     <!--hide edit and delete buttons if not usable (not correctUser)-->
                     <% if(currentUser && car.author.id.equals(currentUser._id)){ %>
                         <a class="btn btn-warning" href="/cars/<%=car._id%>/edit">Edit</a>
-                        <!--<form class="delete-form" action="/cars/<%=car._id%>?_method=DELETE" method="POST">-->
-                        <!--    <button class="btn btn-danger">Delete</button>-->
-                        <!--</form>-->
+                        <form class="delete-form" action="/cars/<%=car._id%>?_method=DELETE" method="POST">
+                            <button class="btn btn-danger">Delete</button>
+                        </form>
                     <% } %>
                 </div>
             </div>
