@@ -26,11 +26,11 @@ router.post("/register",function(req,res){
     var newUser = new User({username:req.body.username});
     User.register(newUser,req.body.password,function(err,user){
         if(err){
-            console.log(err);
-            return res.render("cars/show");
+            req.flash("error", err.message);
+            return res.redirect("/register");
         }
         passport.authenticate("local")(req,res,function(){
-            //console.log("REGISTERED " + newUser.username);
+            req.flash("success", "Welcome to Car Show " + user.username + "!");
             res.redirect("/cars");
         });
     });
