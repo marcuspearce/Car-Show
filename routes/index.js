@@ -31,7 +31,7 @@ router.post("/register",function(req,res){
         }
         passport.authenticate("local")(req,res,function(){
             //console.log("REGISTERED " + newUser.username);
-            res.redirect("/");
+            res.redirect("/cars");
         });
     });
 });
@@ -46,11 +46,8 @@ router.get("/login",function(req,res){
 // LOGIN LOGIC
 router.post("/login",passport.authenticate("local",
     {
-        successRedirect:"/",
-        failureRedirect:"/login"
-        // FOR BELOW TO WORK INCORPORATE FLASH MESSAGES LATER
-        // successFlash: "Welcome back!",
-        // failureFlash: "Invalid username or password"
+        successRedirect:"/cars",
+        failureRedirect:"/login",
     }), function(req,res){
 });
 
@@ -58,7 +55,8 @@ router.post("/login",passport.authenticate("local",
 // LOGOUT ROUTE
 router.get("/logout",function(req,res){
     req.logout();
-    res.redirect("/");
+    req.flash("success","Logged you out!");
+    res.redirect("/cars"); // IF TWO REDIRECTS THEN LOSE FLASH
 });
 
 
