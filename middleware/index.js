@@ -19,10 +19,12 @@ middlewareObj.checkCarOwnership = function(req,res,next){
         Car.findById(req.params.id,function(err,foundCar){
             if(err){
                 // car not found
+                req.flash("error", "Car not found :c");
                 res.redirect("back");
             }else{
                 if(!foundCar){
                     // car not found
+                    req.flash("error","Car not found :c");
                     return res.redirect("back");
                 }
                 
@@ -31,12 +33,14 @@ middlewareObj.checkCarOwnership = function(req,res,next){
                     next();
                 }else{
                     // not allowed - not owner
-                    res.redirect("back");
+                    req.flash("error","You don't have permission to do that!");
+                    res.redirect("/cars/" + req.params.id); //only if tries to hardcode
                 }
             }
         });
     } else {
         // not logged in - needs to login
+        req.flash("error","You need to be logged in to do that!");
         res.redirect("/login");
     }
 }
@@ -46,13 +50,11 @@ middlewareObj.checkCommentOwnership = function(req,res,next){
     if(req.isAuthenticated()){
         Comment.findById(req.params.comment_id,function(err,foundComment){
             if(err){
-                // comment not found
-                console.log(err);
+                req.flash("error","Comment not found :c");
                 res.redirect("back");
             }else{
                 if(!foundComment){
-                    // comment not found
-                    console.log(err);
+                    req.flash("error","Comment not found :c");
                     return res.redirect("back");
                 }
                 
@@ -61,13 +63,14 @@ middlewareObj.checkCommentOwnership = function(req,res,next){
                     next();
                 }else{
                     // not allowed - not owner
-                    console.log(err);
+                    req.flash("error","You don't have permission to do that");
                     res.redirect("back");
                 }
             }
         });
     } else {
         // not logged in - needs to login
+        req.flash("error","You need to be logged in to do that!");
         res.redirect("/login");
     }
 }

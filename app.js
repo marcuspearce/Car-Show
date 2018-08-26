@@ -8,8 +8,6 @@ var express     = require("express"),
     passport    = require("passport"),
     localStrategy = require("passport-local"),
     methodOverride = require("method-override"),
-    Car         = require("./models/car"),
-    Comment     = require("./models/comment"),
     User        = require("./models/user");
     
 var carRoutes       = require("./routes/cars"),
